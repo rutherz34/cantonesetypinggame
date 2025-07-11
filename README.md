@@ -4,6 +4,18 @@ A fun and educational typing game that helps players learn Cantonese Jyutping (ç
 
 Try the game [here](https://rutherz34.github.io/cantonesetypinggame/)!
 
+## Screenshots
+
+Starting Page:
+![Starting Page](game_layout/Slide1.png)
+
+Gameplay:
+![Gameplay](game_layout/Slide2.png)
+
+Game over:
+![Game over](game_layout/Slide3.png)
+
+
 ## ðŸŽ® Features
 
 ### Core Gameplay
