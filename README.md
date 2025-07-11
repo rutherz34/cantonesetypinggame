@@ -2,6 +2,8 @@
 
 A fun and educational typing game that helps players learn Cantonese Jyutping (粵拼) through interactive gameplay. Players type the correct Jyutping romanization for falling Chinese characters to score points and avoid losing lives.
 
+Try the game [here](https://rutherz34.github.io/cantonesetypinggame/)!
+
 ## 🎮 Features
 
 ### Core Gameplay
