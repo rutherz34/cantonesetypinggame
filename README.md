@@ -2,8 +2,6 @@
 
 A fun and educational typing game that helps players learn Cantonese Jyutping (粵拼) through interactive gameplay. Players type the correct Jyutping romanization for falling Chinese characters to score points and avoid losing lives.
 
-![Game Screenshot](https://via.placeholder.com/800x400/3498db/ffffff?text=Jyutping+Typing+Game)
-
 ## 🎮 Features
 
 ### Core Gameplay
@@ -225,10 +223,6 @@ We welcome contributions! Please follow these steps:
 - Test on multiple devices
 - Update documentation as needed
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgments
 
 - **Hong Kong Language Society** for Jyutping romanization system
@@ -239,8 +233,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For feedback, questions, or support:
 - **Email**: rutherz34@gmail.com
-- **GitHub Issues**: [Create an issue](https://github.com/yourusername/jyutping-typing-game/issues)
-
 ---
 
 **Made with ❤️ for Cantonese language learning**
