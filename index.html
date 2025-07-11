@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>粵拼打字遊戲</title>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="characters.js"></script>
+    <script src="ball.js"></script>
+    <script src="play.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <script src="navigation.js"></script>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-title">
+                <h1>粵拼打字遊戲 (Beta)</h1>
+            </div>
+            <div class="nav-links">
+                <button class="nav-button" onclick="showModal('jyutping')">學習粵拼</button>
+                <button class="nav-button" onclick="showModal('scoreboard')">排行榜</button>
+                <button class="nav-button" onclick="showModal('contact')">聯絡我哋</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal Container -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="startScreen">
+        <h2>粵拼打字遊戲</h2>
+        <div class="game-info">
+            <ul>
+                <li>輸入正確粵拼消除跌落嘅字符可獲得1分</li>
+                <li>字符掂到<span style="color:red;">紅線</span>扣除1命，直到歸0遊戲結束</li>
+                <li>點擊燈膽（💡）  可獲得提示</li>
+                <li>彩色字符附有特殊能力</li>
+                <ul>
+                    <li><span style="color:red;">紅色</span>：添加1命</li>  
+                    <li><span style="color:blue;">藍色</span>：字符凍結5秒</li> 
+                    <li><span style="color:green;">綠色</span>：分數增1倍（掂到<span style="color:red;">紅線</span>歸1倍）</li> 
+                    <li><span class='strokeme'>黃色</span>：可喺5秒內點擊消除字符</li> 
+                </ul>
+            </ul>
+        </div>
+        <button id="startButton" onclick="startGame()">開始遊戲</button>
+    </div>
+
+    <!-- Main Game Container -->
+    <div id="canvasContainer"></div>
+    
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen">
+        <h2>遊戲結束</h2>
+        <p>總積分: <span id="finalScore">0</span></p>
+        <div class="score-submission">
+            <label for="playerName">玩家名稱:</label>
+            <input type="text" id="playerName" placeholder="輸入你的名字" maxlength="20">
+        </div>
+        <button id="restartButton" onclick="saveScoreAndRestart()">再玩過</button>
+    </div>
+
+    <!-- Sound Effects -->
+    <audio id="gameOverSound" preload="auto" muted>
+        <source src="sounds/gameover.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="popSound" preload="auto" muted>
+        <source src="sounds/pop.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="powerupSound" preload="auto" muted>
+        <source src="sounds/powerup.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="deadSound" preload="auto" muted>
+        <source src="sounds/dead.mp3" type="audio/mpeg">
+    </audio>
+</body>
+</html> 

@@ -1,0 +1,20 @@
+        // Character database with support for multiple jyutping pronunciations
+        const characters = [
+            {char: '保', jyutping: ['bou2']},
+            {char: '人', jyutping: ['jan4']},
+            {char: '嗰', jyutping: ['go2']},
+            {char: '你', jyutping: ['nei5']},
+            {char: '我', jyutping: ['ngo5']},
+            {char: '係', jyutping: ['hai6']},
+            {char: '佢', jyutping: ['keoi5']},
+            {char: '咁', jyutping: ['gam2']},
+            {char: '咗', jyutping: ['zo2']},
+            {char: '嘅', jyutping: ['ge3']},
+            {char: '喺', jyutping: ['hai2']},
+            {char: '畀', jyutping: ['bei2']},
+            {char: '同', jyutping: ['tung4']},
+            {char: '講', jyutping: ['gong2']},
+            {char: '唔', jyutping: ['m4']},
+            {char: '上', jyutping: ['soeng5', 'soeng6']},
+            {char: '下', jyutping: ['haa5', 'haa6', 'haa2']},
+        ];

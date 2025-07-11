@@ -1,0 +1,648 @@
+/* ========================================
+   FONTS
+   ======================================== */
+
+@font-face {
+    font-family: 'GenSenRounded';
+    src: url('./fonts/GenSenRounded-B.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ========================================
+   BASE STYLES
+   ======================================== */
+
+body {
+    margin: 0;
+    padding: 20px;
+    background-color: white;
+    font-family: GenSenRounded;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 80px;
+}
+
+ul {
+    line-height: 160%;
+}
+
+/* ========================================
+   NAVIGATION BAR
+   ======================================== */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-title h1 {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    padding: 15px 0;
+}
+
+.nav-button {
+    background-color: transparent;
+    color: white;
+    border: 2px solid transparent;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ========================================
+   MODAL STYLES
+   ======================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+.modal-content h2 {
+    background-color: #3498db;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    border-radius: 15px 15px 0 0;
+    text-align: center;
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.modal-body h3 {
+    color: #2c3e50;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 8px;
+}
+
+.modal-body ul {
+    margin: 15px 0;
+    padding-left: 20px;
+}
+
+.modal-body li {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.jyutping-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.jyutping-grid div {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.tone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.tone-grid div {
+    background-color: #e3f2fd;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #bbdefb;
+}
+
+.examples {
+    background-color: #f1f8e9;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border-left: 4px solid #4caf50;
+}
+
+.examples p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+/* Title styling */
+body > h1 {
+    font-weight: bold;
+    color: #333;
+}
+
+#canvasContainer {
+    margin: 10px 0;
+    position: relative;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: lightblue; /* Light blue to match canvas background */
+}
+
+/* Input field styles */
+#jyutpingInput {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+    width: 100px;
+    height: 25px;
+    padding: 10px;
+    font-size: 18px;
+    font-family: GenSenRounded;
+    text-align: center;
+    border: 2px solid #333;
+    border-radius: 25px;
+    background-color: white;
+    line-height: 1.4; /* Better line height for the font */
+}
+
+#startScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    min-width: 300px;
+    z-index: 100;
+}
+
+#startScreen h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+#startScreen p {
+    color: #555;
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+.game-info {
+    text-align: left;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+#startButton {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-top: 20px;
+    font-family: GenSenRounded;
+    transition: background-color 0.3s ease;
+}
+
+#startButton:hover {
+    background-color: #229954;
+}
+
+.strokeme {
+    color:yellow;
+    background-color: #f8f9fa;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  }
+
+#gameOverScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    display: none;
+    min-width: 300px;
+}
+
+.score-submission {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.score-submission label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.score-submission input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: GenSenRounded;
+    box-sizing: border-box;
+}
+
+.score-submission input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+#restartButton {
+    background-color: #FF6B6B;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-top: 20px;
+    font-family: GenSenRounded
+}
+
+#restartButton:hover {
+    background-color: #ff5252;
+}
+
+/* Scoreboard Styles */
+.scoreboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.scoreboard-header h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.scoreboard-table {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.scoreboard-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 80px 100px;
+    gap: 10px;
+    padding: 12px 15px;
+    align-items: center;
+    border-bottom: 1px solid #ecf0f1;
+    transition: background-color 0.2s ease;
+    min-height: 50px;
+}
+
+.scoreboard-row:hover {
+    background-color: #f8f9fa;
+}
+
+.scoreboard-row.header {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+    border-bottom: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.scoreboard-row.header:hover {
+    background-color: #3498db;
+}
+
+.scoreboard-row.rank-1 {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+}
+
+.scoreboard-row.rank-2 {
+    background-color: #f8f9fa;
+    border-left: 4px solid #6c757d;
+}
+
+.scoreboard-row.rank-3 {
+    background-color: #fff5f5;
+    border-left: 4px solid #dc3545;
+}
+
+.rank {
+    font-weight: bold;
+    text-align: center;
+}
+
+.name {
+    font-weight: 500;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.score {
+    font-weight: bold;
+    text-align: center;
+    color: #2c3e50;
+}
+
+.date {
+    font-size: 14px;
+    color: #6c757d;
+    text-align: center;
+}
+
+.no-scores {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 40px 20px;
+}
+
+.loading {
+    text-align: center;
+    color: #3498db;
+    font-style: italic;
+    padding: 40px 20px;
+    animation: pulse 1.5s infinite;
+}
+
+.error {
+    text-align: center;
+    color: #e74c3c;
+    font-style: italic;
+    padding: 40px 20px;
+    background-color: #fdf2f2;
+    border-radius: 8px;
+    border: 1px solid #fecaca;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.scoreboard-summary {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-top: 2px solid #ecf0f1;
+}
+
+.scoreboard-summary p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* Mobile Responsive Styles for Scoreboard */
+@media (max-width: 768px) {
+    .scoreboard-row {
+        grid-template-columns: 50px 1fr 70px 80px;
+        gap: 8px;
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    .scoreboard-table {
+        max-height: 50vh;
+    }
+    
+    .date {
+        font-size: 12px;
+    }
+    
+    .scoreboard-summary {
+        margin-top: 15px;
+        padding: 12px;
+    }
+    
+    .scoreboard-summary p {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .scoreboard-row {
+        grid-template-columns: 40px 1fr 60px 70px;
+        gap: 6px;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+    
+    .scoreboard-table {
+        max-height: 45vh;
+    }
+    
+    .date {
+        font-size: 11px;
+    }
+    
+    .scoreboard-summary p {
+        font-size: 12px;
+    }
+}
+
+/* Mobile Responsive Modal Styles */
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+        max-height: 85vh;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-content h2 {
+        padding: 15px;
+        font-size: 20px;
+    }
+    
+    .close {
+        right: 15px;
+        top: 10px;
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        margin: 5% auto;
+        width: 98%;
+        max-height: 90vh;
+        border-radius: 10px;
+    }
+    
+    .modal-body {
+        padding: 15px;
+    }
+    
+    .modal-content h2 {
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 10px 10px 0 0;
+    }
+    
+    .close {
+        right: 10px;
+        top: 8px;
+        font-size: 20px;
+    }
+}
+
+/* ========================================
+   CONTACT STYLES
+   ======================================== */
+
+#contactContent {
+    text-align: center;
+}
+
+.email-link {
+    color: #3498db;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px 20px;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    background-color: white;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.email-link:hover {
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+}
+
+.contact-note {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 20px;
+}
+
+/* Responsive contact */
+@media (max-width: 768px) {
+    .email-link {
+        font-size: 18px;
+        padding: 8px 16px;
+    }
+    
+    .contact-email {
+        margin: 20px 0;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .email-link {
+        font-size: 16px;
+        padding: 6px 12px;
+    }
+    
+    .contact-email {
+        margin: 15px 0;
+        padding: 12px;
+    }
+}
