@@ -904,26 +904,19 @@ function hideComments() {
 }
 
 function loadComments() {
-    console.log('Loading comments...');
-    fetch('/api/comments')
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(comments => {
-            console.log('Comments loaded:', comments);
-            displayComments(comments);
-        })
-        .catch(error => {
-            console.error('Error loading comments:', error);
-            const commentsList = document.getElementById('commentsList');
-            if (commentsList) {
-                commentsList.innerHTML = '<p style="text-align: center; color: #ff0000;">載入留言失敗</p>';
-            }
-        });
+    console.log('Loading comments from localStorage...');
+    try {
+        const storedComments = localStorage.getItem('gameComments');
+        const comments = storedComments ? JSON.parse(storedComments) : [];
+        console.log('Comments loaded:', comments);
+        displayComments(comments);
+    } catch (error) {
+        console.error('Error loading comments:', error);
+        const commentsList = document.getElementById('commentsList');
+        if (commentsList) {
+            commentsList.innerHTML = '<p style="text-align: center; color: #ff0000;">載入留言失敗</p>';
+        }
+    }
 }
 
 function displayComments(comments) {
@@ -972,46 +965,41 @@ function submitComment() {
     submitButton.disabled = true;
     commentInput.disabled = true;
     
-    const commentData = {
-        text: comment,
-        timestamp: new Date().toISOString()
-    };
-    
-    console.log('Sending comment data:', commentData);
-    
-    fetch('/api/comments', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(commentData)
-    })
-    .then(response => {
-        console.log('Submit response status:', response.status);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Submit response data:', data);
-        if (data.success) {
-            commentInput.value = '';
-            loadComments(); // Reload comments to show the new one
-        } else {
-            alert('留言發送失敗，請再試一次');
-        }
-    })
-    .catch(error => {
+    try {
+        // Get existing comments from localStorage
+        const storedComments = localStorage.getItem('gameComments');
+        const comments = storedComments ? JSON.parse(storedComments) : [];
+        
+        // Add new comment
+        const newComment = {
+            id: Date.now(), // Simple ID generation
+            text: comment,
+            timestamp: new Date().toISOString()
+        };
+        
+        comments.unshift(newComment); // Add to beginning
+        
+        // Keep only the latest 50 comments to prevent localStorage from getting too large
+        const limitedComments = comments.slice(0, 50);
+        
+        // Save back to localStorage
+        localStorage.setItem('gameComments', JSON.stringify(limitedComments));
+        
+        console.log('Comment saved successfully');
+        
+        // Clear input and reload comments
+        commentInput.value = '';
+        displayComments(limitedComments);
+        
+    } catch (error) {
         console.error('Error submitting comment:', error);
         alert('留言發送失敗，請再試一次');
-    })
-    .finally(() => {
+    } finally {
         // Re-enable button and input
         submitButton.disabled = false;
         commentInput.disabled = false;
         commentInput.focus();
-    });
+    }
 }
 
 // Allow Enter key to submit comment
