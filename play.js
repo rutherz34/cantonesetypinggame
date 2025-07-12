@@ -281,49 +281,53 @@ async function saveDetailedStats() {
     console.log('=====================================');
     
     try {
-        const response = await fetch('/api/scores', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: gameStats.username,
-                score: gameStats.finalScore,
-                startTime: gameStats.startTime,
-                endTime: gameStats.endTime,
-                maxLives: gameStats.maxLives,
-                maxMultiplier: gameStats.maxMultiplier,
-                redBallsCollected: gameStats.redBallsCollected,
-                blueBallsCollected: gameStats.blueBallsCollected,
-                yellowBallsCollected: gameStats.yellowBallsCollected,
-                greenBallsCollected: gameStats.greenBallsCollected,
-                ballsBurst: gameStats.ballsBurst,
-                ballsClicked: gameStats.ballsClicked,
-                tone1Correct: gameStats.tone1Correct,
-                tone2Correct: gameStats.tone2Correct,
-                tone3Correct: gameStats.tone3Correct,
-                tone4Correct: gameStats.tone4Correct,
-                tone5Correct: gameStats.tone5Correct,
-                tone6Correct: gameStats.tone6Correct,
-                repeatedCorrect: gameStats.repeatedCorrect
-            })
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            console.log('✅ Game statistics saved successfully');
-            
-            // Refresh scoreboard if it's currently displayed
-            if (typeof displayScoreboard === 'function') {
-                setTimeout(() => {
-                    displayScoreboard();
-                }, 500); // Small delay to ensure the score is saved
-            }
-        } else {
-            console.warn('❌ Failed to save game statistics');
+        // Save to localStorage instead of server
+        const storedScores = localStorage.getItem('jyutpingScores');
+        const scores = storedScores ? JSON.parse(storedScores) : [];
+        
+        const newScore = {
+            name: gameStats.username || '匿名玩家',
+            score: gameStats.finalScore,
+            date: new Date().toLocaleDateString('zh-Hant'),
+            time: new Date().toLocaleTimeString('zh-Hant'),
+            startTime: gameStats.startTime,
+            endTime: gameStats.endTime,
+            maxLives: gameStats.maxLives,
+            maxMultiplier: gameStats.maxMultiplier,
+            redBallsCollected: gameStats.redBallsCollected,
+            blueBallsCollected: gameStats.blueBallsCollected,
+            yellowBallsCollected: gameStats.yellowBallsCollected,
+            greenBallsCollected: gameStats.greenBallsCollected,
+            ballsBurst: gameStats.ballsBurst,
+            ballsClicked: gameStats.ballsClicked,
+            tone1Correct: gameStats.tone1Correct,
+            tone2Correct: gameStats.tone2Correct,
+            tone3Correct: gameStats.tone3Correct,
+            tone4Correct: gameStats.tone4Correct,
+            tone5Correct: gameStats.tone5Correct,
+            tone6Correct: gameStats.tone6Correct,
+            repeatedCorrect: gameStats.repeatedCorrect
+        };
+        
+        scores.push(newScore);
+        scores.sort((a, b) => b.score - a.score);
+        
+        // Keep only top 100 scores
+        if (scores.length > 100) {
+            scores.splice(100);
+        }
+        
+        localStorage.setItem('jyutpingScores', JSON.stringify(scores));
+        console.log('✅ Game statistics saved to localStorage successfully');
+        
+        // Refresh scoreboard if it's currently displayed
+        if (typeof displayScoreboard === 'function') {
+            setTimeout(() => {
+                displayScoreboard();
+            }, 500); // Small delay to ensure the score is saved
         }
     } catch (error) {
-        console.warn('❌ Server unavailable for game statistics:', error);
+        console.warn('❌ Error saving game statistics to localStorage:', error);
     }
 }
 
