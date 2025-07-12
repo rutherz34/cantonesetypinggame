@@ -114,7 +114,6 @@ The game includes a comprehensive guide covering:
 {
   "express": "^4.18.2",
   "cors": "^2.8.5",
-  "sqlite3": "^5.1.6",
   "body-parser": "^1.20.2"
 }
 ```
