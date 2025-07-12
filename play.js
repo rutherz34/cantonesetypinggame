@@ -73,6 +73,48 @@ let hintStartTime = 0;
 let lastSelectedCharacter = null;
 
 // ========================================
+// STATISTICS TRACKING
+// ========================================
+
+// Game session statistics
+let gameStats = {
+    // Basic game info
+    startTime: null,
+    endTime: null,
+    username: '',
+    
+    // Score and lives
+    finalScore: 0,
+    maxLives: CONFIG.INITIAL_LIVES,
+    maxMultiplier: 1,
+    
+    // Power-up collection
+    redBallsCollected: 0,
+    blueBallsCollected: 0,
+    yellowBallsCollected: 0,
+    greenBallsCollected: 0,
+    
+    // Game mechanics
+    ballsBurst: 0,
+    ballsClicked: 0,
+    
+    // Jyutping tone statistics
+    tone1Correct: 0,
+    tone2Correct: 0,
+    tone3Correct: 0,
+    tone4Correct: 0,
+    tone5Correct: 0,
+    tone6Correct: 0,
+    
+    // Repeated correct inputs
+    repeatedCorrect: 0,
+    
+    // Track for repeated inputs
+    lastCorrectJyutping: null,
+    correctJyutpingCount: 0
+};
+
+// ========================================
 // SOUND SYSTEM
 // ========================================
 
@@ -104,6 +146,186 @@ function playGameOverSound() { playSound(gameOverSound, 'gameOver'); }
 function playPopSound() { playSound(popSound, 'pop'); }
 function playPowerupSound() { playSound(powerupSound, 'powerup'); }
 function playDeadSound() { playSound(deadSound, 'dead'); }
+
+// ========================================
+// STATISTICS FUNCTIONS
+// ========================================
+
+/**
+ * Initialize game statistics
+ */
+function initializeGameStats() {
+    gameStats = {
+        startTime: new Date().toISOString(),
+        endTime: null,
+        username: document.getElementById('playerName')?.value || '匿名玩家',
+        
+        finalScore: 0,
+        maxLives: CONFIG.INITIAL_LIVES,
+        maxMultiplier: 1,
+        
+        redBallsCollected: 0,
+        blueBallsCollected: 0,
+        yellowBallsCollected: 0,
+        greenBallsCollected: 0,
+        
+        ballsBurst: 0,
+        ballsClicked: 0,
+        
+        tone1Correct: 0,
+        tone2Correct: 0,
+        tone3Correct: 0,
+        tone4Correct: 0,
+        tone5Correct: 0,
+        tone6Correct: 0,
+        
+        repeatedCorrect: 0,
+        
+        lastCorrectJyutping: null,
+        correctJyutpingCount: 0
+    };
+}
+
+/**
+ * Track jyutping tone statistics
+ * @param {string} jyutping - The correct jyutping input
+ */
+function trackJyutpingTone(jyutping) {
+    // Extract tone number from jyutping (last character)
+    const tone = jyutping.slice(-1);
+    
+    console.log('🎵 Tracking jyutping tone:', jyutping, 'tone:', tone);
+    
+    switch(tone) {
+        case '1':
+            gameStats.tone1Correct++;
+            break;
+        case '2':
+            gameStats.tone2Correct++;
+            break;
+        case '3':
+            gameStats.tone3Correct++;
+            break;
+        case '4':
+            gameStats.tone4Correct++;
+            break;
+        case '5':
+            gameStats.tone5Correct++;
+            break;
+        case '6':
+            gameStats.tone6Correct++;
+            break;
+    }
+    
+    // Track repeated correct inputs
+    if (jyutping === gameStats.lastCorrectJyutping) {
+        gameStats.repeatedCorrect++;
+        console.log('🔄 Repeated correct input:', jyutping);
+    }
+    gameStats.lastCorrectJyutping = jyutping;
+}
+
+/**
+ * Track power-up collection
+ * @param {string} powerupType - Type of power-up collected
+ */
+function trackPowerupCollection(powerupType) {
+    console.log('⚡ Tracking power-up collection:', powerupType);
+    
+    switch(powerupType) {
+        case 'red':
+            gameStats.redBallsCollected++;
+            break;
+        case 'blue':
+            gameStats.blueBallsCollected++;
+            break;
+        case 'yellow':
+            gameStats.yellowBallsCollected++;
+            break;
+        case 'green':
+            gameStats.greenBallsCollected++;
+            break;
+    }
+}
+
+/**
+ * Update maximum statistics
+ */
+function updateMaxStats() {
+    if (lives > gameStats.maxLives) {
+        gameStats.maxLives = lives;
+    }
+    if (scoreMultiplier > gameStats.maxMultiplier) {
+        gameStats.maxMultiplier = scoreMultiplier;
+    }
+}
+
+/**
+ * Save detailed game statistics to scores table
+ */
+async function saveDetailedStats() {
+    gameStats.endTime = new Date().toISOString();
+    gameStats.finalScore = score;
+    
+    // Debug logging
+    console.log('=== SAVING DETAILED STATISTICS ===');
+    console.log('Game Stats:', gameStats);
+    console.log('Final Score:', score);
+    console.log('Balls Burst:', gameStats.ballsBurst);
+    console.log('Power-ups Collected:', {
+        red: gameStats.redBallsCollected,
+        blue: gameStats.blueBallsCollected,
+        yellow: gameStats.yellowBallsCollected,
+        green: gameStats.greenBallsCollected
+    });
+    console.log('=====================================');
+    
+    try {
+        const response = await fetch('/api/scores', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: gameStats.username,
+                score: gameStats.finalScore,
+                startTime: gameStats.startTime,
+                endTime: gameStats.endTime,
+                maxLives: gameStats.maxLives,
+                maxMultiplier: gameStats.maxMultiplier,
+                redBallsCollected: gameStats.redBallsCollected,
+                blueBallsCollected: gameStats.blueBallsCollected,
+                yellowBallsCollected: gameStats.yellowBallsCollected,
+                greenBallsCollected: gameStats.greenBallsCollected,
+                ballsBurst: gameStats.ballsBurst,
+                ballsClicked: gameStats.ballsClicked,
+                tone1Correct: gameStats.tone1Correct,
+                tone2Correct: gameStats.tone2Correct,
+                tone3Correct: gameStats.tone3Correct,
+                tone4Correct: gameStats.tone4Correct,
+                tone5Correct: gameStats.tone5Correct,
+                tone6Correct: gameStats.tone6Correct,
+                repeatedCorrect: gameStats.repeatedCorrect
+            })
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log('✅ Game statistics saved successfully');
+            
+            // Refresh scoreboard if it's currently displayed
+            if (typeof displayScoreboard === 'function') {
+                setTimeout(() => {
+                    displayScoreboard();
+                }, 500); // Small delay to ensure the score is saved
+            }
+        } else {
+            console.warn('❌ Failed to save game statistics');
+        }
+    } catch (error) {
+        console.warn('❌ Server unavailable for game statistics:', error);
+    }
+}
 
 // ========================================
 // P5.JS SETUP AND DRAW
@@ -186,6 +408,9 @@ function startGame() {
     document.getElementById('startScreen').style.display = 'none';
     inputField.elt.style.display = 'block';
     inputField.elt.focus();
+    
+    // Initialize statistics tracking
+    initializeGameStats();
 }
 
 /**
@@ -213,6 +438,9 @@ function updateGame() {
     
     // Handle power-up timers
     handlePowerupTimers();
+    
+    // Update maximum statistics
+    updateMaxStats();
 }
 
 /**
@@ -427,12 +655,23 @@ function checkMatch(input) {
         }
         
         if (isMatch && !balls[i].burstAnimation) {
+            // Track power-up collection
+            if (balls[i].powerup) {
+                trackPowerupCollection(balls[i].powerup);
+            }
+            
+            // Track jyutping tone statistics
+            trackJyutpingTone(input);
+            
             // Activate power-up if one exists
             if (balls[i].powerup) {
                 activatePowerup(balls[i].powerup);
             }
             
             balls[i].burst();
+            gameStats.ballsBurst++;
+            console.log('💥 Ball burst! Total burst:', gameStats.ballsBurst);
+            
             // Play appropriate sound based on whether ball has powerup
             if (balls[i].powerup) {
                 playPowerupSound(); // Play powerup sound for colored balls
@@ -508,6 +747,9 @@ function gameOver() {
     document.getElementById('finalScore').textContent = score;
     document.getElementById('gameOverScreen').style.display = 'block';
     
+    // Save detailed statistics
+    saveDetailedStats();
+    
     // Play game over sound
     playGameOverSound();
 }
@@ -574,6 +816,12 @@ function mousePressed() {
     for (let i = balls.length - 1; i >= 0; i--) {
         let ball = balls[i];
         if (!ball.burstAnimation && dist(mouseX, mouseY, ball.x, ball.y) < ball.size / 2) {
+            gameStats.ballsClicked++;
+            // Track power-up collection
+            if (ball.powerup) {
+                trackPowerupCollection(ball.powerup);
+            }
+            
             // If the ball has a powerup, activate it first
             if (ball.powerup) {
                 activatePowerup(ball.powerup);
@@ -581,6 +829,8 @@ function mousePressed() {
             
             // Then burst the ball
             ball.burst();
+            gameStats.ballsBurst++;
+            
             // Play appropriate sound based on whether ball has powerup
             if (ball.powerup) {
                 playPowerupSound(); // Play powerup sound for colored balls
@@ -624,3 +874,156 @@ function handlePowerupTimers() {
         console.log('Freeze active, time left:', timeLeft, 'seconds');
     }
 }
+
+// Comment System Functions
+function toggleComments() {
+    const commentSection = document.getElementById('commentSection');
+    if (commentSection.classList.contains('show')) {
+        hideComments();
+    } else {
+        showComments();
+    }
+}
+
+function showComments() {
+    const commentSection = document.getElementById('commentSection');
+    commentSection.classList.add('show');
+    loadComments(); // Load comments when showing
+    // Focus on input for better UX
+    setTimeout(() => {
+        const commentInput = document.getElementById('commentInput');
+        if (commentInput) {
+            commentInput.focus();
+        }
+    }, 100);
+}
+
+function hideComments() {
+    const commentSection = document.getElementById('commentSection');
+    commentSection.classList.remove('show');
+}
+
+function loadComments() {
+    console.log('Loading comments...');
+    fetch('/api/comments')
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(comments => {
+            console.log('Comments loaded:', comments);
+            displayComments(comments);
+        })
+        .catch(error => {
+            console.error('Error loading comments:', error);
+            const commentsList = document.getElementById('commentsList');
+            if (commentsList) {
+                commentsList.innerHTML = '<p style="text-align: center; color: #ff0000;">載入留言失敗</p>';
+            }
+        });
+}
+
+function displayComments(comments) {
+    const commentsList = document.getElementById('commentsList');
+    commentsList.innerHTML = '';
+    
+    if (comments.length === 0) {
+        commentsList.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">暫時冇留言</p>';
+        return;
+    }
+    
+    comments.forEach(comment => {
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'comment-item';
+        
+        const commentText = document.createElement('p');
+        commentText.className = 'comment-text';
+        commentText.textContent = comment.text;
+        
+        const commentTime = document.createElement('p');
+        commentTime.className = 'comment-time';
+        commentTime.textContent = new Date(comment.timestamp).toLocaleString('zh-Hant');
+        
+        commentDiv.appendChild(commentText);
+        commentDiv.appendChild(commentTime);
+        commentsList.appendChild(commentDiv);
+    });
+    
+    // Scroll to bottom to show latest comments
+    commentsList.scrollTop = commentsList.scrollHeight;
+}
+
+function submitComment() {
+    const commentInput = document.getElementById('commentInput');
+    const submitButton = document.getElementById('submitComment');
+    const comment = commentInput.value.trim();
+    
+    console.log('Submitting comment:', comment);
+    
+    if (!comment) {
+        alert('請輸入留言內容');
+        return;
+    }
+    
+    // Disable button and input during submission
+    submitButton.disabled = true;
+    commentInput.disabled = true;
+    
+    const commentData = {
+        text: comment,
+        timestamp: new Date().toISOString()
+    };
+    
+    console.log('Sending comment data:', commentData);
+    
+    fetch('/api/comments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(commentData)
+    })
+    .then(response => {
+        console.log('Submit response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Submit response data:', data);
+        if (data.success) {
+            commentInput.value = '';
+            loadComments(); // Reload comments to show the new one
+        } else {
+            alert('留言發送失敗，請再試一次');
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting comment:', error);
+        alert('留言發送失敗，請再試一次');
+    })
+    .finally(() => {
+        // Re-enable button and input
+        submitButton.disabled = false;
+        commentInput.disabled = false;
+        commentInput.focus();
+    });
+}
+
+// Allow Enter key to submit comment
+document.addEventListener('DOMContentLoaded', function() {
+    const commentInput = document.getElementById('commentInput');
+    if (commentInput) {
+        commentInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitComment();
+            }
+        });
+    }
+    
+    // Comments are now loaded when the window is shown via toggleComments()
+});

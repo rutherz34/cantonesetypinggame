@@ -4714,4 +4714,10 @@ const characters = [
     {char: '黷', jyutping: ['duk6'], frequency: 1},
     {char: '齟', jyutping: ['zeoi2'], frequency: 1},
     {char: '齬', jyutping: ['jyu5'], frequency: 1},
+    
+    // Profanity are removed from the list but recorded here for reference
+    // {char: '屌', jyutping: ['diu2'], frequency: 597},
+    // {char: '閪', jyutping: ['hai1'], frequency: 62},
+    // {char: '屄', jyutping: ['hai1'], frequency: 2},
+    // {char: '撚', jyutping: ['lan2', 'nan2'], frequency: 917},
 ];

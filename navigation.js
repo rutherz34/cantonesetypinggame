@@ -8,7 +8,7 @@ const MODAL_DATA = {
         content: `
             <div class="modal-body">
                 <h3>粵拼基本概念：</h3>
-                <p>粵拼是香港語言學學會制定的粵語拼音方案，用於標註粵語發音。</p>
+                <p>粵拼係香港語言學學會制定嘅粵語拼音方案，用於標註粵語發音。</p>
                 
                 <h3>聲母 (Initials)：</h3>
                 <div class="jyutping-grid">
@@ -98,7 +98,7 @@ const MODAL_DATA = {
                 <div id="contactContent">
                     <h3>意見回饋</h3>
                     <p>我哋非常重視您嘅意見！如有任何建議、問題定回饋，請直接發送電子郵件至：</p>
-                    <a href="mailto:rutherz34@gmail.com" class="email-link">rutherz34@gmail.com</a>
+                    <p class="email-link">rutherz34@gmail.com</p>
                     <p class="contact-note">我哋會盡快回覆您嘅郵件。</p>
                 </div>
             </div>
@@ -266,12 +266,8 @@ async function displayScoreboard() {
  * Saves the current score and restarts the game
  */
 async function saveScoreAndRestart() {
-    const playerName = document.getElementById('playerName').value.trim();
-    const finalScore = parseInt(document.getElementById('finalScore').textContent);
-    
-    if (finalScore > 0) {
-        await addScore(playerName, finalScore);
-    }
+    // Note: Detailed stats are already saved in play.js via saveDetailedStats()
+    // This function now only handles the restart logic
     
     // Reset the name field to random player name for next game
     document.getElementById('playerName').value = generateRandomPlayerName();

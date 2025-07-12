@@ -219,6 +219,166 @@ body > h1 {
     background-color: lightblue; /* Light blue to match canvas background */
 }
 
+/* Comment Section Styles */
+#commentSection {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    width: 300px;
+    height: 500px;
+    background-color: skyblue;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    z-index: 100;
+}
+
+#commentSection.show {
+    display: flex; /* Show when class is added */
+}
+
+#commentSection h3 {
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+}
+
+.comment-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #2c3e50;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.comment-close:hover {
+    background-color: rgba(44, 62, 80, 0.1);
+}
+
+#commentsList {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    max-height: 350px;
+}
+
+.comment-item {
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    word-wrap: break-word;
+}
+
+.comment-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #333;
+}
+
+.comment-time {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.comment-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#commentInput {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid #3498db;
+    border-radius: 20px;
+    font-size: 14px;
+    font-family: GenSenRounded;
+    outline: none;
+}
+
+#commentInput:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+#submitComment {
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: GenSenRounded;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+#submitComment:hover {
+    background-color: #2980b9;
+}
+
+#submitComment:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* Responsive design for comment section */
+@media (max-width: 1200px) {
+    #commentSection {
+        position: relative;
+        right: auto;
+        top: auto;
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    #commentSection {
+        width: 90%;
+        height: 350px;
+    }
+    
+    .comment-form {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    #commentInput {
+        width: 100%;
+    }
+    
+    #submitComment {
+        width: 100%;
+    }
+}
+
 /* Input field styles */
 #jyutpingInput {
     position: absolute;
@@ -606,7 +766,6 @@ body > h1 {
     border-radius: 8px;
     background-color: white;
     transition: all 0.3s ease;
-    display: inline-block;
 }
 
 .email-link:hover {

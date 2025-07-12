@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 
 // ========================================
 // SERVER CONFIGURATION
@@ -10,6 +10,8 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const SCORES_FILE = './scores.json';
+const COMMENTS_FILE = './comments.json';
 
 // ========================================
 // MIDDLEWARE
@@ -20,44 +22,117 @@ app.use(bodyParser.json());
 app.use(express.static('.')); // Serve static files from current directory
 
 // ========================================
-// DATABASE SETUP
-// ========================================
-
-const db = new sqlite3.Database('./scores.db', (err) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
-    } else {
-        console.log('Connected to SQLite database');
-        initDatabase();
-    }
-});
-
-// ========================================
-// DATABASE FUNCTIONS
+// JSON DATA FUNCTIONS
 // ========================================
 
 /**
- * Initialize database table
+ * Initialize JSON data file if it doesn't exist
  */
-function initDatabase() {
-    const createTable = `
-        CREATE TABLE IF NOT EXISTS scores (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            score INTEGER NOT NULL,
-            date TEXT NOT NULL,
-            time TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    `;
-    
-    db.run(createTable, (err) => {
-        if (err) {
-            console.error('Error creating table:', err.message);
-        } else {
-            console.log('Scores table ready');
-        }
-    });
+function initJsonData() {
+    if (!fs.existsSync(SCORES_FILE)) {
+        const initialData = {
+            scores: [],
+            metadata: {
+                created_at: new Date().toISOString(),
+                total_scores: 0,
+                source: 'JSON storage'
+            }
+        };
+        fs.writeFileSync(SCORES_FILE, JSON.stringify(initialData, null, 2));
+        console.log('Created new JSON scores file');
+    } else {
+        console.log('JSON scores file already exists');
+    }
+}
+
+/**
+ * Initialize comments JSON file if it doesn't exist
+ */
+function initCommentsData() {
+    if (!fs.existsSync(COMMENTS_FILE)) {
+        const initialData = {
+            comments: [],
+            metadata: {
+                created_at: new Date().toISOString(),
+                total_comments: 0,
+                source: 'JSON storage'
+            }
+        };
+        fs.writeFileSync(COMMENTS_FILE, JSON.stringify(initialData, null, 2));
+        console.log('Created new JSON comments file');
+    } else {
+        console.log('JSON comments file already exists');
+    }
+}
+
+/**
+ * Read scores from JSON file
+ */
+function readScores() {
+    try {
+        const data = fs.readFileSync(SCORES_FILE, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading scores file:', error.message);
+        return { scores: [], metadata: { total_scores: 0 } };
+    }
+}
+
+/**
+ * Read comments from JSON file
+ */
+function readComments() {
+    try {
+        const data = fs.readFileSync(COMMENTS_FILE, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading comments file:', error.message);
+        return { comments: [], metadata: { total_comments: 0 } };
+    }
+}
+
+/**
+ * Write scores to JSON file
+ */
+function writeScores(data) {
+    try {
+        fs.writeFileSync(SCORES_FILE, JSON.stringify(data, null, 2));
+        return true;
+    } catch (error) {
+        console.error('Error writing scores file:', error.message);
+        return false;
+    }
+}
+
+/**
+ * Write comments to JSON file
+ */
+function writeComments(data) {
+    try {
+        fs.writeFileSync(COMMENTS_FILE, JSON.stringify(data, null, 2));
+        return true;
+    } catch (error) {
+        console.error('Error writing comments file:', error.message);
+        return false;
+    }
+}
+
+/**
+ * Generate unique ID for new scores
+ */
+function generateId() {
+    const data = readScores();
+    const maxId = data.scores.reduce((max, score) => Math.max(max, score.id || 0), 0);
+    return maxId + 1;
+}
+
+/**
+ * Generate unique ID for new comments
+ */
+function generateCommentId() {
+    const data = readComments();
+    const maxId = data.comments.reduce((max, comment) => Math.max(max, comment.id || 0), 0);
+    return maxId + 1;
 }
 
 // ========================================
@@ -65,86 +140,108 @@ function initDatabase() {
 // ========================================
 
 /**
- * Get all scores (top 100)
+ * Get all scores with detailed statistics (top 100)
  */
 app.get('/api/scores', (req, res) => {
-    const query = `
-        SELECT name, score, date, time 
-        FROM scores 
-        ORDER BY score DESC, created_at ASC 
-        LIMIT 100
-    `;
+    const data = readScores();
+    const sortedScores = data.scores
+        .sort((a, b) => b.score - a.score || new Date(a.created_at) - new Date(b.created_at))
+        .slice(0, 100);
     
-    db.all(query, [], (err, rows) => {
-        if (err) {
-            console.error('Error fetching scores:', err.message);
-            res.status(500).json({ error: 'Failed to fetch scores' });
-        } else {
-            res.json(rows);
-        }
-    });
+    res.json(sortedScores);
 });
 
 /**
- * Add new score
+ * Add new score with detailed statistics
  */
 app.post('/api/scores', (req, res) => {
-    const { name, score } = req.body;
+    console.log('Received POST request to /api/scores');
+    console.log('Request body:', req.body);
+    
+    const { 
+        name, 
+        score,
+        startTime,
+        endTime,
+        maxLives,
+        maxMultiplier,
+        redBallsCollected,
+        blueBallsCollected,
+        yellowBallsCollected,
+        greenBallsCollected,
+        ballsBurst,
+        ballsClicked,
+        tone1Correct,
+        tone2Correct,
+        tone3Correct,
+        tone4Correct,
+        tone5Correct,
+        tone6Correct,
+        repeatedCorrect
+    } = req.body;
     
     if (!name || !score || isNaN(score)) {
+        console.log('Invalid score data:', { name, score });
         return res.status(400).json({ error: 'Invalid score data' });
     }
     
-    const date = new Date().toLocaleDateString('zh-Hant');
-    const time = new Date().toLocaleTimeString('zh-Hant');
+    const data = readScores();
+    const newScore = {
+        id: generateId(),
+        name,
+        score: parseInt(score),
+        date: new Date().toLocaleDateString('zh-Hant'),
+        time: new Date().toLocaleTimeString('zh-Hant'),
+        start_time: startTime || null,
+        end_time: endTime || null,
+        max_lives: maxLives || 3,
+        max_multiplier: maxMultiplier || 1,
+        red_balls_collected: redBallsCollected || 0,
+        blue_balls_collected: blueBallsCollected || 0,
+        yellow_balls_collected: yellowBallsCollected || 0,
+        green_balls_collected: greenBallsCollected || 0,
+        balls_burst: ballsBurst || 0,
+        tone1_correct: tone1Correct || 0,
+        tone2_correct: tone2Correct || 0,
+        tone3_correct: tone3Correct || 0,
+        tone4_correct: tone4Correct || 0,
+        tone5_correct: tone5Correct || 0,
+        tone6_correct: tone6Correct || 0,
+        repeated_correct: repeatedCorrect || 0,
+        balls_clicked: ballsClicked || 0,
+        created_at: new Date().toISOString()
+    };
     
-    const query = `
-        INSERT INTO scores (name, score, date, time)
-        VALUES (?, ?, ?, ?)
-    `;
+    data.scores.push(newScore);
+    data.metadata.total_scores = data.scores.length;
+    data.metadata.last_updated = new Date().toISOString();
     
-    db.run(query, [name, score, date, time], function(err) {
-        if (err) {
-            console.error('Error adding score:', err.message);
-            res.status(500).json({ error: 'Failed to add score' });
-        } else {
-            res.json({ 
-                success: true, 
-                id: this.lastID,
-                message: 'Score added successfully' 
-            });
-        }
-    });
+    if (writeScores(data)) {
+        console.log('Successfully added score with ID:', newScore.id);
+        res.json({ 
+            success: true, 
+            id: newScore.id,
+            message: 'Score with statistics added successfully' 
+        });
+    } else {
+        res.status(500).json({ error: 'Failed to save score' });
+    }
 });
 
 /**
  * Get score statistics
  */
 app.get('/api/stats', (req, res) => {
-    const queries = {
-        totalScores: 'SELECT COUNT(*) as count FROM scores',
-        topScore: 'SELECT MAX(score) as maxScore FROM scores',
-        averageScore: 'SELECT AVG(score) as avgScore FROM scores'
+    const data = readScores();
+    const scores = data.scores;
+    
+    const stats = {
+        totalScores: { count: scores.length },
+        topScore: { maxScore: scores.length > 0 ? Math.max(...scores.map(s => s.score)) : 0 },
+        averageScore: { avgScore: scores.length > 0 ? scores.reduce((sum, s) => sum + s.score, 0) / scores.length : 0 }
     };
     
-    const stats = {};
-    let completed = 0;
-    const totalQueries = Object.keys(queries).length;
-    
-    Object.keys(queries).forEach(key => {
-        db.get(queries[key], [], (err, row) => {
-            if (err) {
-                console.error(`Error fetching ${key}:`, err.message);
-            } else {
-                stats[key] = row;
-            }
-            completed++;
-            
-            if (completed === totalQueries) {
-                res.json(stats);
-            }
-        });
-    });
+    res.json(stats);
 });
 
 /**
@@ -158,14 +255,101 @@ app.delete('/api/scores', (req, res) => {
         return res.status(401).json({ error: 'Unauthorized' });
     }
     
-    db.run('DELETE FROM scores', (err) => {
-        if (err) {
-            console.error('Error clearing scores:', err.message);
-            res.status(500).json({ error: 'Failed to clear scores' });
-        } else {
-            res.json({ success: true, message: 'All scores cleared' });
+    const data = {
+        scores: [],
+        metadata: {
+            created_at: new Date().toISOString(),
+            total_scores: 0,
+            source: 'JSON storage - cleared'
         }
-    });
+    };
+    
+    if (writeScores(data)) {
+        res.json({ success: true, message: 'All scores cleared' });
+    } else {
+        res.status(500).json({ error: 'Failed to clear scores' });
+    }
+});
+
+// ========================================
+// COMMENT API ROUTES
+// ========================================
+
+/**
+ * Get all comments (latest 50)
+ */
+app.get('/api/comments', (req, res) => {
+    const data = readComments();
+    const sortedComments = data.comments
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .slice(0, 50);
+    
+    res.json(sortedComments);
+});
+
+/**
+ * Add new comment
+ */
+app.post('/api/comments', (req, res) => {
+    console.log('Received POST request to /api/comments');
+    console.log('Request body:', req.body);
+    
+    const { text, timestamp } = req.body;
+    
+    if (!text || !text.trim()) {
+        console.log('Invalid comment data:', { text });
+        return res.status(400).json({ error: 'Invalid comment data' });
+    }
+    
+    const data = readComments();
+    const newComment = {
+        id: generateCommentId(),
+        text: text.trim(),
+        timestamp: timestamp || new Date().toISOString(),
+        created_at: new Date().toISOString()
+    };
+    
+    data.comments.push(newComment);
+    data.metadata.total_comments = data.comments.length;
+    data.metadata.last_updated = new Date().toISOString();
+    
+    if (writeComments(data)) {
+        console.log('Successfully added comment with ID:', newComment.id);
+        res.json({ 
+            success: true, 
+            id: newComment.id,
+            message: 'Comment added successfully' 
+        });
+    } else {
+        res.status(500).json({ error: 'Failed to save comment' });
+    }
+});
+
+/**
+ * Clear all comments (admin function)
+ */
+app.delete('/api/comments', (req, res) => {
+    const { adminKey } = req.body;
+    
+    // Simple admin key check (in production, use proper authentication)
+    if (adminKey !== 'admin123') {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    const data = {
+        comments: [],
+        metadata: {
+            created_at: new Date().toISOString(),
+            total_comments: 0,
+            source: 'JSON storage - cleared'
+        }
+    };
+    
+    if (writeComments(data)) {
+        res.json({ success: true, message: 'All comments cleared' });
+    } else {
+        res.status(500).json({ error: 'Failed to clear comments' });
+    }
 });
 
 // ========================================
@@ -201,6 +385,8 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log(`API available at http://localhost:${PORT}/api/`);
+    initJsonData();
+    initCommentsData(); // Initialize comments file on startup
 });
 
 // ========================================
@@ -211,12 +397,6 @@ app.listen(PORT, () => {
  * Graceful shutdown
  */
 process.on('SIGINT', () => {
-    db.close((err) => {
-        if (err) {
-            console.error('Error closing database:', err.message);
-        } else {
-            console.log('Database connection closed');
-        }
-        process.exit(0);
-    });
+    console.log('Server shutting down gracefully...');
+    process.exit(0);
 }); 

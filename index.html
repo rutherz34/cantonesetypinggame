@@ -21,6 +21,7 @@
             <div class="nav-links">
                 <button class="nav-button" onclick="showModal('jyutping')">學習粵拼</button>
                 <button class="nav-button" onclick="showModal('scoreboard')">排行榜</button>
+                <button class="nav-button" onclick="toggleComments()">留言板</button>
                 <button class="nav-button" onclick="showModal('contact')">聯絡我哋</button>
             </div>
         </div>
@@ -56,6 +57,18 @@
 
     <!-- Main Game Container -->
     <div id="canvasContainer"></div>
+    
+    <!-- Comment Section -->
+    <div id="commentSection">
+        <h3>留言板
+            <button class="comment-close" onclick="hideComments()">&times;</button>
+        </h3>
+        <div id="commentsList"></div>
+        <div class="comment-form">
+            <input type="text" id="commentInput" placeholder="輸入你的留言..." maxlength="100">
+            <button id="submitComment" onclick="submitComment()">發送</button>
+        </div>
+    </div>
     
     <!-- Game Over Screen -->
     <div id="gameOverScreen">
