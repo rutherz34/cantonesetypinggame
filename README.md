@@ -48,23 +48,17 @@ Game over:
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/jyutping-typing-game.git
-   cd jyutping-typing-game
-   ```
-
-2. **Install dependencies**
+1. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. **Start the server**
+2. **Start the server**
    ```bash
    npm start
    ```
 
-4. **Open the game**
+3. **Open the game**
    - Navigate to `http://localhost:3001` in your browser
    - The game will load automatically
 
@@ -106,7 +100,6 @@ The game includes a comprehensive guide covering:
 ### Backend
 - **Node.js**: Server runtime
 - **Express.js**: Web framework
-- **SQLite3**: Lightweight database for scores
 - **CORS**: Cross-origin resource sharing
 
 ### Dependencies
@@ -114,32 +107,8 @@ The game includes a comprehensive guide covering:
 {
   "express": "^4.18.2",
   "cors": "^2.8.5",
-  "sqlite3": "^5.1.6",
   "body-parser": "^1.20.2"
 }
-```
-
-## 📁 Project Structure
-
-```
-jyutping-typing-game/
-├── index.html              # Main game page
-├── styles.css              # Game styling
-├── play.js                 # Main game logic
-├── ball.js                 # Character ball physics
-├── characters.js           # Character database
-├── navigation.js           # Modal and scoreboard logic
-├── server.js               # Backend server
-├── package.json            # Dependencies and scripts
-├── scores.db               # SQLite database
-├── fonts/                  # Custom fonts
-│   └── GenSenRounded-*.ttf
-├── sounds/                 # Game audio
-│   ├── gameover.mp3
-│   ├── pop.mp3
-│   ├── powerup.mp3
-│   └── dead.mp3
-└── README.md               # This file
 ```
 
 ## 🎨 Customization
@@ -173,29 +142,6 @@ Modify `styles.css` for visual customization:
 - Layout adjustments
 - Responsive breakpoints
 
-## 🔧 API Endpoints
-
-### Scoreboard API
-- `GET /api/scores` - Retrieve top 100 scores
-- `POST /api/scores` - Add new score
-- `DELETE /api/scores` - Clear all scores (admin only)
-- `GET /api/stats` - Get score statistics
-
-### Example Usage
-```javascript
-// Get scores
-fetch('http://localhost:3001/api/scores')
-  .then(response => response.json())
-  .then(scores => console.log(scores));
-
-// Add score
-fetch('http://localhost:3001/api/scores', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name: 'Player', score: 100 })
-});
-```
-
 ## 🐛 Troubleshooting
 
 ### Common Issues
@@ -204,11 +150,6 @@ fetch('http://localhost:3001/api/scores', {
 - Check if server is running on port 3001
 - Ensure all files are in the correct directory
 - Check browser console for JavaScript errors
-
-**Scores not saving**
-- Verify database file permissions
-- Check server logs for database errors
-- Ensure CORS is properly configured
 
 **Audio not working**
 - Modern browsers require user interaction before playing audio
