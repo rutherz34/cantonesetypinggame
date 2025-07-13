@@ -118,8 +118,8 @@ local/
 # Supabase local development
 .supabase/
 
-# Built files
-supabase-client-built.js
+# Built files (temporarily included for GitHub Pages deployment)
+# supabase-client-built.js
 
 # Backup files
 *.bak
