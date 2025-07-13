@@ -132,14 +132,21 @@ function generateRandomPlayerName() {
  */
 async function loadScores() {
     try {
-        // Try to load from server first (Supabase API)
-        const response = await fetch('/api/scores');
-        if (response.ok) {
-            const scores = await response.json();
-            console.log('Loaded scores from Supabase API:', scores.length);
+        // Try to load from Supabase directly first
+        if (typeof loadScoresFromSupabase === 'function') {
+            const scores = await loadScoresFromSupabase();
+            console.log('Loaded scores from Supabase directly:', scores.length);
             return scores;
         } else {
-            throw new Error('Failed to load scores from server');
+            // Fallback to server API
+            const response = await fetch('/api/scores');
+            if (response.ok) {
+                const scores = await response.json();
+                console.log('Loaded scores from server API:', scores.length);
+                return scores;
+            } else {
+                throw new Error('Failed to load scores from server');
+            }
         }
     } catch (error) {
         console.warn('Server unavailable, falling back to localStorage:', error);

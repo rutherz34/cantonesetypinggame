@@ -304,19 +304,30 @@ async function saveDetailedStats() {
             repeatedCorrect: gameStats.repeatedCorrect
         };
         
-        const response = await fetch('/api/scores', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(scoreData)
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            console.log('✅ Game statistics saved to Supabase successfully:', result);
+        // Try to save to Supabase directly first
+        if (typeof saveScoreToSupabase === 'function') {
+            const result = await saveScoreToSupabase(scoreData);
+            if (result.success) {
+                console.log('✅ Game statistics saved to Supabase successfully:', result);
+            } else {
+                throw new Error('Failed to save score to Supabase');
+            }
         } else {
-            throw new Error('Failed to save score to server');
+            // Fallback to server API
+            const response = await fetch('/api/scores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(scoreData)
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('✅ Game statistics saved to server successfully:', result);
+            } else {
+                throw new Error('Failed to save score to server');
+            }
         }
         
         // Also save to localStorage as backup
