@@ -118,6 +118,9 @@ local/
 # Supabase local development
 .supabase/
 
+# Built files
+supabase-client-built.js
+
 # Backup files
 *.bak
 *.backup

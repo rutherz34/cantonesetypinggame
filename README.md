@@ -68,6 +68,26 @@ npm run dev
 ```
 This will start the server with nodemon for automatic restarts during development.
 
+### Building for Production
+
+To build the game with your Supabase credentials:
+
+1. **Set up environment variables**
+   Create a `.env` file in the root directory:
+   ```bash
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+2. **Build the game**
+   ```bash
+   npm run build
+   ```
+   This creates `supabase-client-built.js` with your credentials.
+
+3. **Deploy to GitHub Pages**
+   The built file will be used automatically when deployed.
+
 ## 🎯 How to Play
 
 ### Basic Controls
