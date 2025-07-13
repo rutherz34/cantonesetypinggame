@@ -132,7 +132,19 @@ function generateRandomPlayerName() {
  */
 async function loadScores() {
     try {
-        // Try to load from localStorage first (works on GitHub Pages)
+        // Try to load from server first (Supabase API)
+        const response = await fetch('/api/scores');
+        if (response.ok) {
+            const scores = await response.json();
+            console.log('Loaded scores from Supabase API:', scores.length);
+            return scores;
+        } else {
+            throw new Error('Failed to load scores from server');
+        }
+    } catch (error) {
+        console.warn('Server unavailable, falling back to localStorage:', error);
+        
+        // Fallback to localStorage
         const storedScores = localStorage.getItem('jyutpingScores');
         if (storedScores) {
             const scores = JSON.parse(storedScores);
@@ -140,17 +152,6 @@ async function loadScores() {
             return scores;
         }
         
-        // Fallback to server (won't work on GitHub Pages but good for local development)
-        const response = await fetch(`${API_BASE_URL}/scores`);
-        if (response.ok) {
-            const scores = await response.json();
-            console.log('Loaded scores from server:', scores.length);
-            return scores;
-        } else {
-            throw new Error('Failed to load scores from server');
-        }
-    } catch (error) {
-        console.warn('Server unavailable, using empty scores:', error);
         return [];
     }
 }
