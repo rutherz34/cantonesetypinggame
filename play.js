@@ -1032,6 +1032,13 @@ async function loadComments() {
 
 function displayComments(comments) {
     const commentsList = document.getElementById('commentsList');
+    
+    // Check if element exists
+    if (!commentsList) {
+        console.warn('Comments list element not found');
+        return;
+    }
+    
     commentsList.innerHTML = '';
     
     if (comments.length === 0) {

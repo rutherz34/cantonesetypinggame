@@ -235,6 +235,12 @@ function loadScoresFromLocalStorage() {
 async function displayScoreboard() {
     const scoreboardList = document.getElementById('scoreboardList');
     
+    // Check if element exists
+    if (!scoreboardList) {
+        console.warn('Scoreboard list element not found');
+        return;
+    }
+    
     // Show loading state
     scoreboardList.innerHTML = '<p class="loading">載入中...</p>';
     
