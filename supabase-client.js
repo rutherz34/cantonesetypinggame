@@ -11,12 +11,30 @@ let supabase;
 // Initialize Supabase client
 async function initSupabase() {
     if (typeof window !== 'undefined') {
+        console.log('🔄 Initializing Supabase client...');
+        
+        // Check if Supabase is already loaded
+        if (window.supabase) {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase client initialized (already loaded)');
+            return;
+        }
+        
         // Load Supabase from CDN
         const script = document.createElement('script');
         script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
         script.onload = function() {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('✅ Supabase client initialized');
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase client initialized successfully');
+                console.log('🔗 Supabase URL:', SUPABASE_URL);
+                console.log('🔑 Using anon key (safe to expose)');
+            } catch (error) {
+                console.error('❌ Error initializing Supabase client:', error);
+            }
+        };
+        script.onerror = function() {
+            console.error('❌ Failed to load Supabase from CDN');
         };
         document.head.appendChild(script);
     }
@@ -25,24 +43,30 @@ async function initSupabase() {
 // Save score to Supabase
 async function saveScoreToSupabase(scoreData) {
     try {
+        console.log('🔄 Attempting to save score to Supabase...');
+        console.log('📊 Score data:', scoreData);
+        
         if (!supabase) {
+            console.error('❌ Supabase client not initialized');
             throw new Error('Supabase client not initialized');
         }
 
+        console.log('✅ Supabase client is available');
+        
         const { data, error } = await supabase
             .from('scores')
             .insert([scoreData])
             .select();
 
         if (error) {
-            console.error('Error saving score to Supabase:', error);
+            console.error('❌ Error saving score to Supabase:', error);
             return { success: false, error: error.message };
         }
 
-        console.log('✅ Score saved to Supabase:', data[0]);
+        console.log('✅ Score saved to Supabase successfully:', data[0]);
         return { success: true, data: data[0] };
     } catch (error) {
-        console.error('Error in saveScoreToSupabase:', error);
+        console.error('❌ Error in saveScoreToSupabase:', error);
         return { success: false, error: error.message };
     }
 }

@@ -999,13 +999,21 @@ function hideComments() {
     commentSection.classList.remove('show');
 }
 
-function loadComments() {
-    console.log('Loading comments from localStorage...');
+async function loadComments() {
+    console.log('Loading comments...');
     try {
-        const storedComments = localStorage.getItem('gameComments');
-        const comments = storedComments ? JSON.parse(storedComments) : [];
-        console.log('Comments loaded:', comments);
-        displayComments(comments);
+        // Try to load from Supabase first
+        if (typeof loadCommentsFromSupabase === 'function') {
+            const comments = await loadCommentsFromSupabase();
+            console.log('Comments loaded from Supabase:', comments);
+            displayComments(comments);
+        } else {
+            // Fallback to localStorage
+            const storedComments = localStorage.getItem('gameComments');
+            const comments = storedComments ? JSON.parse(storedComments) : [];
+            console.log('Comments loaded from localStorage:', comments);
+            displayComments(comments);
+        }
     } catch (error) {
         console.error('Error loading comments:', error);
         const commentsList = document.getElementById('commentsList');
@@ -1045,7 +1053,7 @@ function displayComments(comments) {
     commentsList.scrollTop = commentsList.scrollHeight;
 }
 
-function submitComment() {
+async function submitComment() {
     const commentInput = document.getElementById('commentInput');
     const submitButton = document.getElementById('submitComment');
     const comment = commentInput.value.trim();
@@ -1062,30 +1070,48 @@ function submitComment() {
     commentInput.disabled = true;
     
     try {
-        // Get existing comments from localStorage
-        const storedComments = localStorage.getItem('gameComments');
-        const comments = storedComments ? JSON.parse(storedComments) : [];
-        
-        // Add new comment
-        const newComment = {
-            id: Date.now(), // Simple ID generation
-            text: comment,
-            timestamp: new Date().toISOString()
-        };
-        
-        comments.unshift(newComment); // Add to beginning
-        
-        // Keep only the latest 50 comments to prevent localStorage from getting too large
-        const limitedComments = comments.slice(0, 50);
-        
-        // Save back to localStorage
-        localStorage.setItem('gameComments', JSON.stringify(limitedComments));
-        
-        console.log('Comment saved successfully');
-        
-        // Clear input and reload comments
-        commentInput.value = '';
-        displayComments(limitedComments);
+        // Try to save to Supabase first
+        if (typeof saveCommentToSupabase === 'function') {
+            const commentData = {
+                text: comment,
+                timestamp: new Date().toISOString()
+            };
+            
+            const result = await saveCommentToSupabase(commentData);
+            if (result.success) {
+                console.log('Comment saved to Supabase successfully');
+                commentInput.value = '';
+                // Reload comments to show the new one
+                await loadComments();
+            } else {
+                throw new Error('Failed to save comment to Supabase');
+            }
+        } else {
+            // Fallback to localStorage
+            const storedComments = localStorage.getItem('gameComments');
+            const comments = storedComments ? JSON.parse(storedComments) : [];
+            
+            // Add new comment
+            const newComment = {
+                id: Date.now(), // Simple ID generation
+                text: comment,
+                timestamp: new Date().toISOString()
+            };
+            
+            comments.unshift(newComment); // Add to beginning
+            
+            // Keep only the latest 50 comments to prevent localStorage from getting too large
+            const limitedComments = comments.slice(0, 50);
+            
+            // Save back to localStorage
+            localStorage.setItem('gameComments', JSON.stringify(limitedComments));
+            
+            console.log('Comment saved to localStorage successfully');
+            
+            // Clear input and reload comments
+            commentInput.value = '';
+            displayComments(limitedComments);
+        }
         
     } catch (error) {
         console.error('Error submitting comment:', error);
