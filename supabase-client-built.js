@@ -45,6 +45,7 @@ async function saveScoreToSupabase(scoreData) {
     try {
         console.log('🔄 Attempting to save score to Supabase...');
         console.log('📊 Score data:', scoreData);
+        console.log('📋 Score data keys:', Object.keys(scoreData));
         
         if (!supabase) {
             console.error('❌ Supabase client not initialized');
@@ -60,6 +61,7 @@ async function saveScoreToSupabase(scoreData) {
 
         if (error) {
             console.error('❌ Error saving score to Supabase:', error);
+            console.error('❌ Error details:', error);
             return { success: false, error: error.message };
         }
 
