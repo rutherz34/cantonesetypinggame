@@ -308,6 +308,11 @@ async function saveDetailedStats() {
         
         // Try to save to Supabase directly first
         if (typeof saveScoreToSupabase === 'function') {
+            console.log('🔍 About to send score data to Supabase:');
+            console.log('🔍 Score data object:', scoreData);
+            console.log('🔍 Score data keys:', Object.keys(scoreData));
+            console.log('🔍 balls_burst value:', scoreData.balls_burst);
+            
             const result = await saveScoreToSupabase(scoreData);
             if (result.success) {
                 console.log('✅ Game statistics saved to Supabase successfully:', result);
