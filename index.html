@@ -43,38 +43,38 @@
         </div>
     </div>
 
-    <!-- Start Screen -->
-    <div id="startScreen">
-        <h2>粵拼打字遊戲</h2>
-        <div class="game-info">
-            <ul>
-                <li>輸入正確粵拼消除跌落嘅字符可獲得1分</li>
-                <li>字符掂到<span style="color:red;">紅線</span>扣除1命，直到歸0遊戲結束</li>
-                <li>點擊燈膽（💡）  可獲得提示</li>
-                <li>彩色字符附有特殊能力</li>
-                <ul>
-                    <li><span style="color:red;">紅色</span>：添加1命</li>  
-                    <li><span style="color:blue;">藍色</span>：字符凍結5秒</li> 
-                    <li><span style="color:green;">綠色</span>：分數增1倍（掂到<span style="color:red;">紅線</span>歸1倍）</li> 
-                    <li><span class='strokeme'>黃色</span>：可喺5秒內點擊消除字符</li> 
-                </ul>
-            </ul>
-        </div>
-        <button id="startButton" onclick="startGame()">開始遊戲</button>
-    </div>
-
     <!-- Main Game Container -->
-    <div id="canvasContainer"></div>
-    
-    <!-- Comment Section -->
-    <div id="commentSection">
-        <h3>留言板
-            <button class="comment-close" onclick="hideComments()">&times;</button>
-        </h3>
-        <div id="commentsList"></div>
-        <div class="comment-form">
-            <input type="text" id="commentInput" placeholder="輸入你的留言..." maxlength="100">
-            <button id="submitComment" onclick="submitComment()">發送</button>
+    <div id="canvasContainer">
+        <!-- Start Screen -->
+        <div id="startScreen">
+            <h2>粵拼打字遊戲</h2>
+            <div class="game-info">
+                <ul>
+                    <li>輸入正確粵拼消除跌落嘅字符可獲得1分</li>
+                    <li>字符掂到<span style="color:red;">紅線</span>扣除1命，直到歸0遊戲結束</li>
+                    <li>點擊燈膽（💡）  可獲得提示</li>
+                    <li>彩色字符附有特殊能力</li>
+                    <ul>
+                        <li><span style="color:red;">紅色</span>：添加1命</li>  
+                        <li><span style="color:blue;">藍色</span>：字符凍結5秒</li> 
+                        <li><span style="color:green;">綠色</span>：分數增1倍（掂到<span style="color:red;">紅線</span>歸1倍）</li> 
+                        <li><span class='strokeme'>黃色</span>：可喺5秒內點擊消除字符</li> 
+                    </ul>
+                </ul>
+            </div>
+            <button id="startButton" onclick="startGame()">開始遊戲</button>
+        </div>
+        
+        <!-- Comment Section -->
+        <div id="commentSection">
+            <h3>留言板
+                <button class="comment-close" onclick="hideComments()">&times;</button>
+            </h3>
+            <div id="commentsList"></div>
+            <div class="comment-form">
+                <input type="text" id="commentInput" placeholder="輸入你的留言..." maxlength="100">
+                <button id="submitComment" onclick="submitComment()">發送</button>
+            </div>
         </div>
     </div>
     
