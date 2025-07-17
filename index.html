@@ -65,6 +65,17 @@
             <button id="startButton" onclick="startGame()">開始遊戲</button>
         </div>
         
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen">
+            <h2>遊戲結束</h2>
+            <p>總積分: <span id="finalScore">0</span></p>
+            <div class="score-submission">
+                <label for="playerName">玩家名稱:</label>
+                <input type="text" id="playerName" placeholder="輸入你的名字" maxlength="20">
+            </div>
+            <button id="restartButton" onclick="saveScoreAndRestart()">再玩過</button>
+        </div>
+        
         <!-- Comment Section -->
         <div id="commentSection">
             <h3>留言板
@@ -76,17 +87,6 @@
                 <button id="submitComment" onclick="submitComment()">發送</button>
             </div>
         </div>
-    </div>
-    
-    <!-- Game Over Screen -->
-    <div id="gameOverScreen">
-        <h2>遊戲結束</h2>
-        <p>總積分: <span id="finalScore">0</span></p>
-        <div class="score-submission">
-            <label for="playerName">玩家名稱:</label>
-            <input type="text" id="playerName" placeholder="輸入你的名字" maxlength="20">
-        </div>
-        <button id="restartButton" onclick="saveScoreAndRestart()">再玩過</button>
     </div>
 
     <!-- Sound Effects -->
