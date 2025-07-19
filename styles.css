@@ -808,3 +808,20 @@ body > h1 {
         padding: 12px;
     }
 }
+
+/* ========================================
+   FAVICON ENHANCEMENTS
+   ======================================== */
+
+/* Make favicon larger in bookmarks and tabs */
+link[rel="icon"] {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* For high-DPI displays, ensure larger favicon is used */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    link[rel="icon"] {
+        image-rendering: auto;
+    }
+}
