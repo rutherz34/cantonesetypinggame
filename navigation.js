@@ -319,9 +319,127 @@ async function displayScoreboard() {
  * Saves the current score and restarts the game
  */
 async function saveScoreAndRestart() {
-    // Save the current game statistics before restarting
-    if (typeof saveDetailedStats === 'function') {
-        await saveDetailedStats();
+    // Capture current game state before restarting
+    const currentScore = typeof score !== 'undefined' ? score : 0;
+    const currentPlayerName = document.getElementById('playerName')?.value || '匿名玩家';
+    
+    // Save the score directly if we have a valid score
+    if (currentScore > 0) {
+        try {
+            // Try to save to Supabase first
+            if (typeof saveScoreToSupabase === 'function') {
+                const scoreData = {
+                    name: currentPlayerName,
+                    score: currentScore,
+                    date: new Date().toLocaleDateString('zh-Hant'),
+                    time: new Date().toLocaleTimeString('zh-Hant'),
+                    start_time: gameStats?.startTime || new Date().toISOString(),
+                    end_time: new Date().toISOString(),
+                    max_lives: gameStats?.maxLives || 3,
+                    max_multiplier: gameStats?.maxMultiplier || 1,
+                    red_balls_collected: gameStats?.redBallsCollected || 0,
+                    blue_balls_collected: gameStats?.blueBallsCollected || 0,
+                    yellow_balls_collected: gameStats?.yellowBallsCollected || 0,
+                    green_balls_collected: gameStats?.greenBallsCollected || 0,
+                    balls_burst: gameStats?.ballsBurst || 0,
+                    balls_clicked: gameStats?.ballsClicked || 0,
+                    tone1_correct: gameStats?.tone1Correct || 0,
+                    tone2_correct: gameStats?.tone2Correct || 0,
+                    tone3_correct: gameStats?.tone3Correct || 0,
+                    tone4_correct: gameStats?.tone4Correct || 0,
+                    tone5_correct: gameStats?.tone5Correct || 0,
+                    tone6_correct: gameStats?.tone6Correct || 0,
+                    repeated_correct: gameStats?.repeatedCorrect || 0
+                };
+                
+                const result = await saveScoreToSupabase(scoreData);
+                if (result.success) {
+                    console.log('✅ Score saved to Supabase successfully:', result);
+                } else {
+                    throw new Error('Failed to save score to Supabase');
+                }
+            } else {
+                // Fallback to server API
+                const response = await fetch('/api/scores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: currentPlayerName,
+                        score: currentScore,
+                        date: new Date().toLocaleDateString('zh-Hant'),
+                        time: new Date().toLocaleTimeString('zh-Hant'),
+                        start_time: gameStats?.startTime || new Date().toISOString(),
+                        end_time: new Date().toISOString(),
+                        max_lives: gameStats?.maxLives || 3,
+                        max_multiplier: gameStats?.maxMultiplier || 1,
+                        red_balls_collected: gameStats?.redBallsCollected || 0,
+                        blue_balls_collected: gameStats?.blueBallsCollected || 0,
+                        yellow_balls_collected: gameStats?.yellowBallsCollected || 0,
+                        green_balls_collected: gameStats?.greenBallsCollected || 0,
+                        balls_burst: gameStats?.ballsBurst || 0,
+                        balls_clicked: gameStats?.ballsClicked || 0,
+                        tone1_correct: gameStats?.tone1Correct || 0,
+                        tone2_correct: gameStats?.tone2Correct || 0,
+                        tone3_correct: gameStats?.tone3Correct || 0,
+                        tone4_correct: gameStats?.tone4Correct || 0,
+                        tone5_correct: gameStats?.tone5Correct || 0,
+                        tone6_correct: gameStats?.tone6Correct || 0,
+                        repeated_correct: gameStats?.repeatedCorrect || 0
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Score saved to server successfully:', result);
+                } else {
+                    throw new Error('Failed to save score to server');
+                }
+            }
+            
+            // Also save to localStorage as backup
+            const storedScores = localStorage.getItem('jyutpingScores');
+            const scores = storedScores ? JSON.parse(storedScores) : [];
+            
+            const newScore = {
+                name: currentPlayerName,
+                score: currentScore,
+                date: new Date().toLocaleDateString('zh-Hant'),
+                time: new Date().toLocaleTimeString('zh-Hant'),
+                start_time: gameStats?.startTime || new Date().toISOString(),
+                end_time: new Date().toISOString(),
+                max_lives: gameStats?.maxLives || 3,
+                max_multiplier: gameStats?.maxMultiplier || 1,
+                red_balls_collected: gameStats?.redBallsCollected || 0,
+                blue_balls_collected: gameStats?.blueBallsCollected || 0,
+                yellow_balls_collected: gameStats?.yellowBallsCollected || 0,
+                green_balls_collected: gameStats?.greenBallsCollected || 0,
+                balls_burst: gameStats?.ballsBurst || 0,
+                balls_clicked: gameStats?.ballsClicked || 0,
+                tone1_correct: gameStats?.tone1Correct || 0,
+                tone2_correct: gameStats?.tone2Correct || 0,
+                tone3_correct: gameStats?.tone3Correct || 0,
+                tone4_correct: gameStats?.tone4Correct || 0,
+                tone5_correct: gameStats?.tone5Correct || 0,
+                tone6_correct: gameStats?.tone6Correct || 0,
+                repeated_correct: gameStats?.repeatedCorrect || 0
+            };
+            
+            scores.push(newScore);
+            scores.sort((a, b) => b.score - a.score);
+            
+            // Keep only top 100 scores
+            if (scores.length > 100) {
+                scores.splice(100);
+            }
+            
+            localStorage.setItem('jyutpingScores', JSON.stringify(scores));
+            console.log('✅ Score also saved to localStorage as backup');
+            
+        } catch (error) {
+            console.error('❌ Error saving score:', error);
+        }
     }
     
     // Reset the name field to random player name for next game
