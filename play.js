@@ -835,6 +835,10 @@ function activatePowerup(powerup) {
 function loseLife() {
     lives--;
     scoreMultiplier = 1;
+    
+    // Play dead sound when losing a life
+    playDeadSound();
+    
     if (lives <= 0) {
         lives = 0;
         gameOver();

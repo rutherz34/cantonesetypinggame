@@ -23,7 +23,7 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    padding-top: 80px;
+    padding-top: 100px;  /* Increased from 80px to ensure more space below navbar */
 }
 
 ul {
@@ -211,12 +211,14 @@ body > h1 {
 }
 
 #canvasContainer {
-    margin: 10px 0;
+    margin: 20px 0;  /* Increased top margin to ensure separation from navbar */
     position: relative;
     border-radius: 40px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: lightblue; /* Light blue to match canvas background */
+    /* Ensure canvas is never covered by navbar */
+    z-index: 1;
 }
 
 /* Comment Section Styles */
@@ -723,6 +725,15 @@ body > h1 {
         right: 15px;
         top: 10px;
         font-size: 24px;
+    }
+    
+    /* Ensure canvas has enough space on mobile */
+    body {
+        padding-top: 120px;  /* Extra space on mobile for navbar */
+    }
+    
+    #canvasContainer {
+        margin: 15px 0;  /* Slightly reduced margin on mobile */
     }
 }
 
