@@ -1,4 +1,4 @@
-# 粵拼打字遊戲 (Jyutping Typing Game)
+# 粵拼打字遊戲 (Cantonese Typing Game)
 
 A fun and educational typing game that helps players learn Cantonese Jyutping (粵拼) through interactive gameplay. Players type the correct Jyutping romanization for falling Chinese characters to score points and avoid losing lives.
 
