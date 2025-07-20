@@ -281,9 +281,12 @@ async function saveDetailedStats() {
     console.log('=====================================');
     
     try {
+        // Get current player name from input field
+        const currentPlayerName = document.getElementById('playerName')?.value || gameStats.username || '匿名玩家';
+        
         // Send detailed stats to Supabase API
         const scoreData = {
-            name: gameStats.username || '匿名玩家',
+            name: currentPlayerName,
             score: gameStats.finalScore,
             date: new Date().toLocaleDateString('zh-Hant'),
             time: new Date().toLocaleTimeString('zh-Hant'),
@@ -342,7 +345,7 @@ async function saveDetailedStats() {
         const scores = storedScores ? JSON.parse(storedScores) : [];
         
         const newScore = {
-            name: gameStats.username || '匿名玩家',
+            name: currentPlayerName,
             score: gameStats.finalScore,
             date: new Date().toLocaleDateString('zh-Hant'),
             time: new Date().toLocaleTimeString('zh-Hant'),
@@ -390,8 +393,11 @@ async function saveDetailedStats() {
             const storedScores = localStorage.getItem('jyutpingScores');
             const scores = storedScores ? JSON.parse(storedScores) : [];
             
+            // Get current player name from input field for fallback
+            const currentPlayerName = document.getElementById('playerName')?.value || gameStats.username || '匿名玩家';
+            
             const newScore = {
-                name: gameStats.username || '匿名玩家',
+                name: currentPlayerName,
                 score: gameStats.finalScore,
                 date: new Date().toLocaleDateString('zh-Hant'),
                 time: new Date().toLocaleTimeString('zh-Hant'),
