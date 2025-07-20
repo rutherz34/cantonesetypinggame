@@ -726,7 +726,27 @@ function spawnBall() {
  * Handles keyboard input for Jyutping typing
  */
 function handleInput() {
-    // This function is kept for any real-time input handling if needed
+    // Real-time input handling - check for matches when input is complete
+    if (gameState !== GameState.PLAYING) return;
+    
+    let input = inputField.value().toLowerCase().trim();
+    
+    // Check for matches when:
+    // 1. Input ends with a space (user finished typing)
+    // 2. Input is 6+ characters (likely complete jyutping)
+    // 3. Input ends with a number (tone marker)
+    if (input && (
+        input.endsWith(' ') || 
+        input.length >= 6 || 
+        /[1-6]$/.test(input)
+    )) {
+        // Remove trailing space if present
+        let cleanInput = input.replace(/ $/, '');
+        if (cleanInput) {
+            checkMatch(cleanInput);
+            inputField.value('');
+        }
+    }
 }
 
 /**
