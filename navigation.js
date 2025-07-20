@@ -319,8 +319,10 @@ async function displayScoreboard() {
  * Saves the current score and restarts the game
  */
 async function saveScoreAndRestart() {
-    // Note: Detailed stats are already saved in play.js via saveDetailedStats()
-    // This function now only handles the restart logic
+    // Save the current game statistics before restarting
+    if (typeof saveDetailedStats === 'function') {
+        await saveDetailedStats();
+    }
     
     // Reset the name field to random player name for next game
     document.getElementById('playerName').value = generateRandomPlayerName();
@@ -397,6 +399,61 @@ document.addEventListener('DOMContentLoaded', function() {
         playerNameInput.value = generateRandomPlayerName();
     }
     
+});
+
+/**
+ * Save score when page is unloaded (user closes tab/window or navigates away)
+ */
+window.addEventListener('beforeunload', function(event) {
+    // Only save if there's an active game with a score
+    if (typeof gameState !== 'undefined' && gameState === 'gameOver' && typeof score !== 'undefined' && score > 0) {
+        // Save the score before the page unloads
+        if (typeof saveDetailedStats === 'function') {
+            // Use synchronous localStorage as fallback since async operations won't complete
+            try {
+                const storedScores = localStorage.getItem('jyutpingScores');
+                const scores = storedScores ? JSON.parse(storedScores) : [];
+                
+                const playerName = document.getElementById('playerName')?.value || '匿名玩家';
+                const newScore = {
+                    name: playerName,
+                    score: score,
+                    date: new Date().toLocaleDateString('zh-Hant'),
+                    time: new Date().toLocaleTimeString('zh-Hant'),
+                    start_time: gameStats?.startTime || new Date().toISOString(),
+                    end_time: new Date().toISOString(),
+                    max_lives: gameStats?.maxLives || 3,
+                    max_multiplier: gameStats?.maxMultiplier || 1,
+                    red_balls_collected: gameStats?.redBallsCollected || 0,
+                    blue_balls_collected: gameStats?.blueBallsCollected || 0,
+                    yellow_balls_collected: gameStats?.yellowBallsCollected || 0,
+                    green_balls_collected: gameStats?.greenBallsCollected || 0,
+                    balls_burst: gameStats?.ballsBurst || 0,
+                    balls_clicked: gameStats?.ballsClicked || 0,
+                    tone1_correct: gameStats?.tone1Correct || 0,
+                    tone2_correct: gameStats?.tone2Correct || 0,
+                    tone3_correct: gameStats?.tone3Correct || 0,
+                    tone4_correct: gameStats?.tone4Correct || 0,
+                    tone5_correct: gameStats?.tone5Correct || 0,
+                    tone6_correct: gameStats?.tone6Correct || 0,
+                    repeated_correct: gameStats?.repeatedCorrect || 0
+                };
+                
+                scores.push(newScore);
+                scores.sort((a, b) => b.score - a.score);
+                
+                // Keep only top 100 scores
+                if (scores.length > 100) {
+                    scores.splice(100);
+                }
+                
+                localStorage.setItem('jyutpingScores', JSON.stringify(scores));
+                console.log('✅ Score saved to localStorage on page unload');
+            } catch (error) {
+                console.error('❌ Error saving score on page unload:', error);
+            }
+        }
+    }
 });
 
 /**

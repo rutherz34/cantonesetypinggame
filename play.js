@@ -854,9 +854,6 @@ function gameOver() {
     document.getElementById('finalScore').textContent = score;
     document.getElementById('gameOverScreen').style.display = 'block';
     
-    // Save detailed statistics
-    saveDetailedStats();
-    
     // Play game over sound
     playGameOverSound();
 }
