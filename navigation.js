@@ -230,6 +230,36 @@ function loadScoresFromLocalStorage() {
 }
 
 /**
+ * Filters scores to show only the highest score for each player
+ * @param {Array} scores - Array of all score objects
+ * @returns {Array} Array of unique player scores (highest score per player)
+ */
+function filterHighestScoresPerPlayer(scores) {
+    const playerScores = new Map();
+    
+    // Group scores by player name and keep the highest score
+    scores.forEach(score => {
+        const playerName = score.name || '匿名玩家';
+        const currentScore = parseInt(score.score) || 0;
+        
+        if (!playerScores.has(playerName) || currentScore > playerScores.get(playerName).score) {
+            playerScores.set(playerName, {
+                name: playerName,
+                score: currentScore,
+                date: score.date,
+                time: score.time
+            });
+        }
+    });
+    
+    // Convert back to array and sort by score (highest first)
+    const uniqueScores = Array.from(playerScores.values());
+    uniqueScores.sort((a, b) => b.score - a.score);
+    
+    return uniqueScores;
+}
+
+/**
  * Displays the scoreboard
  */
 async function displayScoreboard() {
@@ -245,28 +275,29 @@ async function displayScoreboard() {
     scoreboardList.innerHTML = '<p class="loading">載入中...</p>';
     
     try {
-        const scores = await loadScores();
+        const allScores = await loadScores();
         
-        if (scores.length === 0) {
+        if (allScores.length === 0) {
             scoreboardList.innerHTML = '<p class="no-scores">還沒有分數記錄</p>';
             return;
         }
+        
+        // Filter to show only highest score per player
+        const uniqueScores = filterHighestScoresPerPlayer(allScores);
         
         let html = '<div class="scoreboard-table">';
         html += '<div class="scoreboard-row header">';
         html += '<div class="rank">排名</div>';
         html += '<div class="name">玩家</div>';
         html += '<div class="score">分數</div>';
-        html += '<div class="date">日期</div>';
         html += '</div>';
         
-        scores.forEach((score, index) => {
+        uniqueScores.forEach((score, index) => {
             const rankClass = index < 3 ? `rank-${index + 1}` : '';
             html += `<div class="scoreboard-row ${rankClass}">`;
             html += `<div class="rank">${index + 1}</div>`;
             html += `<div class="name">${score.name}</div>`;
             html += `<div class="score">${score.score}</div>`;
-            html += `<div class="date">${score.date}</div>`;
             html += '</div>';
         });
         
@@ -274,7 +305,7 @@ async function displayScoreboard() {
         
         // Add a summary at the bottom
         html += `<div class="scoreboard-summary">`;
-        html += `<p>共顯示 ${scores.length} 個最高分記錄</p>`;
+        html += `<p>共顯示 ${uniqueScores.length} 個玩家嘅最高分記錄</p>`;
         html += `</div>`;
         
         scoreboardList.innerHTML = html;

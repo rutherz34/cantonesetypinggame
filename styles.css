@@ -544,7 +544,7 @@ body > h1 {
 
 .scoreboard-row {
     display: grid;
-    grid-template-columns: 60px 1fr 80px 100px;
+    grid-template-columns: 60px 1fr 80px;
     gap: 10px;
     padding: 12px 15px;
     align-items: center;
@@ -604,12 +604,6 @@ body > h1 {
     color: #2c3e50;
 }
 
-.date {
-    font-size: 14px;
-    color: #6c757d;
-    text-align: center;
-}
-
 .no-scores {
     text-align: center;
     color: #6c757d;
@@ -659,7 +653,7 @@ body > h1 {
 /* Mobile Responsive Styles for Scoreboard */
 @media (max-width: 768px) {
     .scoreboard-row {
-        grid-template-columns: 50px 1fr 70px 80px;
+        grid-template-columns: 50px 1fr 70px;
         gap: 8px;
         padding: 10px 12px;
         font-size: 14px;
@@ -667,10 +661,6 @@ body > h1 {
     
     .scoreboard-table {
         max-height: 50vh;
-    }
-    
-    .date {
-        font-size: 12px;
     }
     
     .scoreboard-summary {
@@ -685,7 +675,7 @@ body > h1 {
 
 @media (max-width: 480px) {
     .scoreboard-row {
-        grid-template-columns: 40px 1fr 60px 70px;
+        grid-template-columns: 40px 1fr 60px;
         gap: 6px;
         padding: 8px 10px;
         font-size: 13px;
@@ -693,10 +683,6 @@ body > h1 {
     
     .scoreboard-table {
         max-height: 45vh;
-    }
-    
-    .date {
-        font-size: 11px;
     }
     
     .scoreboard-summary p {
